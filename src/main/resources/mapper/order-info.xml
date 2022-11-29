@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grabit.bdi.mapper.OrderInfoMapper">
+
+	<select id="selectOrderInfo" parameterType="orderInfo" resultType="orderInfo">
+		select * from order_info where oi_num=#{oiNum}
+	</select>
+	
+	<select id="selectOrderInfoByOrderStatus" parameterType="orderInfo" >
+		select * from order_info where oi_status = 'pending' OR oi_status = 'accepted'
+	</select>
+	
+	<insert id="insertOrderInfo" parameterType="orderInfo" useGeneratedKeys="true" keyProperty="oiNum" keyColumn="oi_num">
+		insert into order_info(ui_num, vi_num,oi_date,oi_cretim,oi_sum
+			
+			<if test="oiMessage!=null">
+			, oi_msg
+			</if>
+			<if test="oiClaim!=null">
+			, oi_claim
+			</if>
+		)
+		values(#{uiNum},#{viNum},DATE_FORMAT(now(), '%Y-%m-%d'),DATE_FORMAT(now(),'%H:%i:%s'),#{oiSum}
+			
+			<if test="oiMessage!=null">
+			, #{oiMsg}
+			</if>
+			<if test="oiClaim!=null">
+			, #{oiClaim}
+			</if>
+		)
+	</insert>
+	
+	<update id="updateOrderInfo" parameterType="orderInfo">
+		update order_info 
+		<set>
+			oi_status = #{oiStatus},
+			oi_modtim = DATE_FORMAT(now(),'%H:%i:%s')
+		</set>
+ 		  where oi_num = #{oiNum}
+	</update>
+	
+	<select id="checkOrderInfo" parameterType="menuInfo" resultType="menuInfo">
+		select * from menu_info where mi_num=#{miNum}
+	</select>
+	
+</mapper>

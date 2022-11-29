@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.grabit.bdi.mapper.MenuInfoMapper">
+	<select id="selectMenuInfoList" resultType="menuInfo"> 
+		SELECT vi.vi_num, mi.* from 
+		venue_info vi, menu_info mi 
+		<where>
+			<if test="viNum!=null">
+				vi.vi_code = mi.vi_code AND vi.vi_num = #{viNum}
+			</if>
+			<if test="searchOpt!=null">
+					and ${searchOpt} LIKE CONCAT('%',#{searchVal},'%')
+			</if>
+		</where>
+		order by mi_num desc
+		limit #{page.startNum},10
+	</select>
+	
+	<select id="selectMenuInfo" parameterType="menuInfo"
+		resultType="menuInfo">
+		select * from menu_info
+		<where>
+			<if test="miNum!=null">
+				mi_num = #{miNum}
+			</if>
+		</where>		
+	</select>
+	
+ 	<select id="totalMenuInfoCount" resultType="int">
+		SELECT COUNT(*) FROM
+		menu_info
+		<where>
+			<if test="viCode!=null">
+				vi_code = #{viCode}
+			</if>
+			<if test="searchOpt!=null">
+					and ${searchOpt} LIKE CONCAT('%',#{searchVal},'%')
+			</if>
+		</where>
+	</select>
+
+	<insert id="insertMenuInfo">
+		insert into
+		menu_info(vi_code,mc_code,mi_name,mi_price,mi_img,mi_intro,mo_code)
+		values(#{viCode},#{mcCode},#{miName},#{miPrice},#{miImg},#{miIntro},#{moCode})
+	</insert>
+
+	<update id="updateMenuInfo" parameterType="menuInfo">
+		update menu_info
+		<set>
+			<if test="miName != null">
+				, mi_name = #{miName}
+			</if>
+			<if test="miPrice != null">
+				, mi_price = #{miPrice}
+			</if>
+			<if test="mcCode != null">
+				, mc_code = #{mcCode}
+			</if>
+			<if test="moCode != null">
+				, mc_code = #{moCode}
+			</if>
+			<if test="miImg != null">
+				, mi_img = #{miImg}
+			</if>
+			<if test="miIntro != null">
+				, mi_intro = #{miIntro}
+			</if>
+		</set>
+		where mi_num = #{miNum}
+	</update>
+
+	<delete id="deleteMenuInfo">
+		delete from menu_info
+		<where>
+			<if test="miNums != null">
+				<foreach collection="miNums" item="miNum" separator="or">
+					mi_num =
+					#{miNum}
+				</foreach>
+			</if>
+			<if test="miNums==null">
+				mi_num = #{miNum}
+			</if>
+		</where>
+	</delete>
+</mapper>
